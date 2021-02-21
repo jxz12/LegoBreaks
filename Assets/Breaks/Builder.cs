@@ -7,10 +7,11 @@ using UnityEngine;
 
 public class Builder : MonoBehaviour {
 
-    [SerializeField] Brick twoByFourPrefab;
+    [SerializeField] Brick[] brickPrefabs;
 
     [SerializeField] int width;  // TODO: adjust to width of bricks
     [SerializeField] int bricksAvailable;
+    [SerializeField] Scorer scorer;
 
     private Brick placingBrick = null;
     private Stack<Brick> placedBricks = new Stack<Brick>();
@@ -26,7 +27,8 @@ public class Builder : MonoBehaviour {
             placingBrick = null;
         }
         if (placedBricks.Count < bricksAvailable) {
-            placingBrick = Instantiate(twoByFourPrefab, transform);
+            int randIdx = UnityEngine.Random.Range(0, brickPrefabs.Length);
+            placingBrick = Instantiate(brickPrefabs[randIdx], transform);
             if (placedBricks.Count > 0) {
                 placingBrick.CopyRotation(placedBricks.Peek());
             }
@@ -39,9 +41,9 @@ public class Builder : MonoBehaviour {
             foreach (var brick in placedBricks) {
                 brick.ActivatePhysics();
             }
-            Destroy(this);
-            // TODO: activate drop with some animation
-            // along with a confirmation UI screen
+            enabled = false;
+            scorer.Drop(placedBricks);
+            // TODO: confirmation UI screen
             // maybe add an exploder brick on impact?
         }
     }
