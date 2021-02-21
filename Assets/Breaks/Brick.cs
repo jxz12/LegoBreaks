@@ -43,10 +43,9 @@ public class Brick : MonoBehaviour {
             0,
             rowOffset * posScale.z
         );
-        print($"placed! ({colPos}, {rowPos}, {height})");
     }
 
-    int rotationStep = 0;
+    public int rotationStep { get; private set; } = 0;
     float currentRotation = 0, targetRotation = 0;
     public void Rotate(bool isClockwise) {
         // one rotation is swap row and col
@@ -77,18 +76,31 @@ public class Brick : MonoBehaviour {
             Swap();
             rotationStep -= 1;
         }
-        // actually rotate object for Unity
-        targetRotation += isClockwise? 90:-90;
     }
+
+    // smoothly rotate actual GameObject for Unity
     float velocityRotation = 0;
-    void Update() {
+    void TweenRotation() {
+        targetRotation = rotationStep * 90;
         currentRotation = Mathf.SmoothDamp(
             currentRotation,
             targetRotation,
             ref velocityRotation,
-            .1f
+            .05f
         );
         toRotate.rotation = Quaternion.Euler(0, currentRotation, 0);
+    }
+    // for instantly setting rotation
+    public void CopyRotation(Brick toCopy) {
+        for (int i=0; i<toCopy.rotationStep%4; i++) {
+            Rotate(true);
+        }
+        targetRotation = rotationStep * 90;
+        currentRotation = targetRotation;
+        toRotate.rotation = Quaternion.Euler(0, currentRotation, 0);
+    }
+    void Update() {
+        TweenRotation();
     }
     public void ActivatePhysics() {
         rbody.isKinematic = false;

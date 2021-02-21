@@ -9,38 +9,43 @@ public class Builder : MonoBehaviour {
 
     [SerializeField] Brick twoByFourPrefab;
 
-    [SerializeField] int radius = 5;
-    [SerializeField] int bricksAvailable = 10;
+    [SerializeField] int width;  // TODO: adjust to width of bricks
+    [SerializeField] int bricksAvailable;
 
-    private Brick currentBrick = null;
+    private Brick placingBrick = null;
     private Stack<Brick> placedBricks = new Stack<Brick>();
     private Stack<Brick> unplacedBricks = new Stack<Brick>();
 
     // Start is called before the first frame update
     void Start() {
-        NewBrick();
+        PlaceBrick();
     }
-    int mouseRow;
-    int mouseCol;
-    void NewBrick() {
-        if (currentBrick != null) {
-            placedBricks.Push(currentBrick);
+    void PlaceBrick() {
+        if (placingBrick != null) {
+            placedBricks.Push(placingBrick);
+            placingBrick = null;
         }
         if (placedBricks.Count < bricksAvailable) {
-            currentBrick = Instantiate(twoByFourPrefab, transform);
-            mouseRow = int.MinValue;
-            mouseCol = int.MinValue;
-            PositionCurrent();
+            placingBrick = Instantiate(twoByFourPrefab, transform);
+            if (placedBricks.Count > 0) {
+                placingBrick.CopyRotation(placedBricks.Peek());
+            }
+            MovePlacing();
+            // clear redo stack
+            while (unplacedBricks.Count > 0) {
+                Destroy(unplacedBricks.Pop().gameObject);
+            }
         } else {
-            currentBrick = null;
-            print("done!"); // TODO: destroy this object and move to drop
-        }
-        // clear redo stack
-        while (unplacedBricks.Count > 0) {
-            Destroy(unplacedBricks.Peek().gameObject);
+            foreach (var brick in placedBricks) {
+                brick.ActivatePhysics();
+            }
+            Destroy(this);
+            // TODO: activate drop with some animation
+            // along with a confirmation UI screen
+            // maybe add an exploder brick on impact?
         }
     }
-    void PositionCurrent() {
+    void MovePlacing() {
         // https://docs.unity3d.com/ScriptReference/Plane.Raycast.html
         var m_Plane = new Plane(Vector3.up, Vector3.zero);
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -52,31 +57,32 @@ public class Builder : MonoBehaviour {
             int col = (int)(hitPoint.x / Brick.posScale.x);
             int row = (int)(hitPoint.z / Brick.posScale.z);
 
-            if (row != mouseRow || col != mouseCol) {
-                // iterate through all 
-                int highest = -1;
-                currentBrick.Place(row, col, 0); // temporary before raising
-                var currentSet = new HashSet<Tuple<int,int>>(currentBrick.Occupied());
-                foreach (var placed in placedBricks) {
-                    foreach (var xy in placed.Occupied()) {
-                        if (currentSet.Contains(xy)) {
-                            highest = Math.Max(highest, placed.height);
-                        }
+            col = Math.Max(-width/2, Math.Min(width/2, col));
+            row = Math.Max(-width/2, Math.Min(width/2, row));
+
+            // iterate through all 
+            // TODO: should only do this on mouse movement or redo etc.
+            //       or use something like a height map to make it O(1)
+            int highest = -1;
+            placingBrick.Place(row, col, 0); // temporary before raising
+            var placingSet = new HashSet<Tuple<int,int>>(placingBrick.Occupied());
+            foreach (var placed in placedBricks) {
+                foreach (var xy in placed.Occupied()) {
+                    if (placingSet.Contains(xy)) {
+                        highest = Math.Max(highest, placed.height);
                     }
                 }
-                currentBrick.Place(row, col, highest+1);
-                mouseRow = row;
-                mouseCol = col;
             }
+            placingBrick.Place(row, col, highest+1);
         }
     }
 
     void Update() {
         if (Input.GetKeyDown(KeyCode.D)) {
-            currentBrick.Rotate(true);
+            placingBrick.Rotate(true);
         }
         if (Input.GetKeyDown(KeyCode.A)) {
-            currentBrick.Rotate(false);
+            placingBrick.Rotate(false);
         }
         if (Input.GetKeyDown(KeyCode.S)) {
             Undo();
@@ -84,16 +90,23 @@ public class Builder : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.W)) {
             Redo();
         }
-        PositionCurrent();
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            NewBrick();
+        MovePlacing();
+        if (Input.GetMouseButtonDown(0)) {
+            PlaceBrick();
         }
-        // maybe add an exploder brick on impact?
     }
     public void Undo() {
-        print("hi");
+        if (placedBricks.Count > 0) {
+            unplacedBricks.Push(placedBricks.Pop());
+            unplacedBricks.Peek().gameObject.SetActive(false);
+        }
+        MovePlacing();
     }
     public void Redo() {
-        print("bye");
+        if (unplacedBricks.Count > 0) {
+            placedBricks.Push(unplacedBricks.Pop());
+            placedBricks.Peek().gameObject.SetActive(true);
+        }
+        MovePlacing();
     }
 }
