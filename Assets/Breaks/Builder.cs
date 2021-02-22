@@ -9,7 +9,7 @@ public class Builder : MonoBehaviour {
 
     [SerializeField] Brick[] brickPrefabs;
 
-    [SerializeField] int width;  // TODO: adjust to width of bricks
+    [SerializeField] int width;
     [SerializeField] int bricksAvailable;
     [SerializeField] Scorer scorer;
 
@@ -56,13 +56,12 @@ public class Builder : MonoBehaviour {
         {
             // get the point that is clicked
             Vector3 hitPoint = ray.GetPoint(enter);
-            int col = (int)(hitPoint.x / Brick.posScale.x);
             int row = (int)(hitPoint.z / Brick.posScale.z);
+            int col = (int)(hitPoint.x / Brick.posScale.x);
 
-            col = Math.Max(-width/2, Math.Min(width/2, col));
             row = Math.Max(-width/2, Math.Min(width/2, row));
+            col = Math.Max(-width/2, Math.Min(width/2, col));
 
-            // iterate through all 
             // TODO: should only do this on mouse movement or redo etc.
             //       or use something like a height map to make it O(1)
             int highest = -1;

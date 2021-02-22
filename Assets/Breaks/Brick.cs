@@ -9,6 +9,7 @@ public class Brick : MonoBehaviour {
     [SerializeField] int[] colStuds;
     [SerializeField] float rowOffset;
     [SerializeField] float colOffset;
+    [SerializeField] Transform toRotate;
     [SerializeField] Rigidbody rbody;
 
     void Start() {
@@ -16,7 +17,6 @@ public class Brick : MonoBehaviour {
             throw new Exception("length of row must equal length of col");
         }
         rbody.isKinematic = true;
-        RandomiseColour();
     }
     public IEnumerable<Tuple<int,int>> Occupied() {
         for (int i=0; i<rowStuds.Length; i++) {
@@ -28,7 +28,7 @@ public class Brick : MonoBehaviour {
     public int height { get; private set; }
     public int rowPos { get; private set; }
     public int colPos { get; private set; }
-    public static Vector3 posScale = new Vector3(1, 1, 1);
+    public static Vector3 posScale = new Vector3(.8f, .96f, .8f);
     public void Place(int row, int col, int height) {
         rowPos = row;
         colPos = col;
@@ -81,14 +81,16 @@ public class Brick : MonoBehaviour {
     // smoothly rotate actual GameObject for Unity
     float velocityRotation = 0;
     void TweenRotation() {
-        targetRotation = rotationStep * 90;
-        currentRotation = Mathf.SmoothDamp(
-            currentRotation,
-            targetRotation,
-            ref velocityRotation,
-            .05f
-        );
-        transform.rotation = Quaternion.Euler(0, currentRotation, 0);
+        if (rbody.isKinematic) {
+            targetRotation = rotationStep * 90;
+            currentRotation = Mathf.SmoothDamp(
+                currentRotation,
+                targetRotation,
+                ref velocityRotation,
+                .05f
+            );
+            toRotate.rotation = Quaternion.Euler(0, currentRotation, 0);
+        }
     }
     // for instantly setting rotation
     public void CopyRotation(Brick toCopy) {
@@ -97,19 +99,12 @@ public class Brick : MonoBehaviour {
         }
         targetRotation = rotationStep * 90;
         currentRotation = targetRotation;
-        transform.rotation = Quaternion.Euler(0, currentRotation, 0);
+        toRotate.rotation = Quaternion.Euler(0, currentRotation, 0);
     }
     void Update() {
         TweenRotation();
     }
     public void ActivatePhysics() {
         rbody.isKinematic = false;
-    }
-    public void RandomiseColour() {
-        float hue = UnityEngine.Random.Range(0, 1f);
-        var randCol = Color.HSVToRGB(hue, 1, 1);
-        foreach (var mr in GetComponentsInChildren<MeshRenderer>()) {
-            mr.material.color = randCol;
-        }
     }
 }
