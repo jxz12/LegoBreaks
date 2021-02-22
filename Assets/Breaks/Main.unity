@@ -240,7 +240,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 287265600}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -19.689411, z: 0}
+  m_LocalPosition: {x: 0, y: -20, z: 0}
   m_LocalScale: {x: 10, y: 1, z: 10}
   m_Children: []
   m_Father: {fileID: 560183948}
@@ -511,8 +511,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1283491565}
   m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: 2.3, y: 0, z: -0}
-  m_LocalScale: {x: 0.48, y: 1, z: 0.96}
+  m_LocalPosition: {x: 2.8, y: 0, z: 0.4}
+  m_LocalScale: {x: 0.56, y: 1, z: 1.12}
   m_Children: []
   m_Father: {fileID: 560183948}
   m_RootOrder: 1
@@ -528,7 +528,7 @@ HingeJoint:
   m_Anchor: {x: -5, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: -90}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 4.7, y: 0, z: 0}
+  m_ConnectedAnchor: {x: 5.6, y: 0, z: 0.4}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -660,7 +660,8 @@ MonoBehaviour:
   brickPrefabs:
   - {fileID: 5155404165454241570, guid: 2ed4548846e494f1d8cee5c9b0fe0026, type: 3}
   - {fileID: 6910342814893830031, guid: 3858426d587c04ee996210b7a917bc92, type: 3}
-  width: 10
+  - {fileID: 5777099863575659297, guid: 7b963a66e68974736827da8a0cebd769, type: 3}
+  width: 8
   bricksAvailable: 5
   scorer: {fileID: 560183949}
 --- !u!4 &1381138388
@@ -706,8 +707,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1423126104}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.52, y: 0, z: 0}
-  m_LocalScale: {x: 0.48, y: 1, z: 0.96}
+  m_LocalPosition: {x: -2.8, y: 0, z: 0.4}
+  m_LocalScale: {x: 0.56, y: 1, z: 1.12}
   m_Children: []
   m_Father: {fileID: 560183948}
   m_RootOrder: 0
@@ -723,7 +724,7 @@ HingeJoint:
   m_Anchor: {x: -5, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: -90}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -4.92, y: 0, z: 0}
+  m_ConnectedAnchor: {x: -5.6, y: 0, z: 0.4}
   m_UseSpring: 0
   m_Spring:
     spring: 0
