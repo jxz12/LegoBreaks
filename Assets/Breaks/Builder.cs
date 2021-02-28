@@ -13,6 +13,7 @@ public class Builder : MonoBehaviour {
     [SerializeField] int bricksAvailable;
     [SerializeField] Scorer scorer;
     [SerializeField] Confirmation confirm;
+    [SerializeField] Tripod tripod;
 
     private Brick placingBrick = null;
     private Stack<Brick> placedBricks = new Stack<Brick>();
@@ -46,9 +47,6 @@ public class Builder : MonoBehaviour {
         }
     }
     void MovePlacing() {
-        if (placingBrick == null) {
-            return;
-        }
         // https://docs.unity3d.com/ScriptReference/Plane.Raycast.html
         var m_Plane = new Plane(Vector3.up, Vector3.zero);
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -80,21 +78,23 @@ public class Builder : MonoBehaviour {
     }
 
     void Update() {
-        if (Input.GetKeyDown(KeyCode.D)) {
-            placingBrick.Rotate(true);
-        }
-        if (Input.GetKeyDown(KeyCode.A)) {
-            placingBrick.Rotate(false);
-        }
-        if (Input.GetKeyDown(KeyCode.S)) {
-            Undo();
-        }
-        if (Input.GetKeyDown(KeyCode.W)) {
-            Redo();
-        }
-        MovePlacing();
-        if (Input.GetMouseButtonDown(0)) {
-            PlaceBrick();
+        if (placingBrick != null) {
+            if (Input.GetKeyDown(KeyCode.D)) {
+                placingBrick.Rotate(true);
+            }
+            if (Input.GetKeyDown(KeyCode.A)) {
+                placingBrick.Rotate(false);
+            }
+            if (Input.GetKeyDown(KeyCode.S)) {
+                Undo();
+            }
+            if (Input.GetKeyDown(KeyCode.W)) {
+                Redo();
+            }
+            MovePlacing();
+            if (Input.GetMouseButtonDown(0)) {
+                PlaceBrick();
+            }
         }
     }
     public void Undo() {
@@ -117,6 +117,7 @@ public class Builder : MonoBehaviour {
         }
         enabled = false;
         scorer.Drop(placedBricks);
+        tripod.Follow(placedBricks, new Vector3(0,0,-10));
         // TODO: maybe add an exploder brick on impact?
     }
     void Cancel() {
