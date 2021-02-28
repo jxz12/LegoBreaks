@@ -8,6 +8,8 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
+using TMPro;
+
 public class Builder : MonoBehaviour {
 
     [SerializeField] Brick[] brickPrefabs;
@@ -17,7 +19,10 @@ public class Builder : MonoBehaviour {
     [SerializeField] Scorer scorer;
     [SerializeField] Choice drop;
     [SerializeField] Tripod tripod;
+
     [SerializeField] Button controls;
+    [SerializeField] TextMeshProUGUI remaining;
+
 
     private Brick placingBrick = null;
     private Stack<Brick> placedBricks = new Stack<Brick>();
@@ -115,6 +120,7 @@ public class Builder : MonoBehaviour {
             placingBrick = placedBricks.Pop();
             cancelTrigger = false;
         }
+        remaining.text = $"Bricks remaining: {bricksAvailable - placedBricks.Count}";
     }
     public void Undo() {
         if (placedBricks.Count > 0) {
@@ -137,6 +143,7 @@ public class Builder : MonoBehaviour {
         scorer.Drop(placedBricks);
         tripod.Follow(placedBricks, new Vector3(0,-2,-10));
         controls.gameObject.SetActive(false);
+        remaining.enabled = false;
         // TODO: maybe add an exploder brick on impact?
         onDrop.Invoke();
     }

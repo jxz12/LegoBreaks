@@ -2,12 +2,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 
+using TMPro;
+
 public class Choice : MonoBehaviour {
 
     [SerializeField] Canvas canvas;
     [SerializeField] Button buttonYes;
     [SerializeField] Button buttonNo;
-    [SerializeField] TMPro.TextMeshProUGUI text;
+    [SerializeField] TextMeshProUGUI text;
 
     public UnityEvent onYes, onNo;
 

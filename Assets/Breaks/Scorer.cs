@@ -5,9 +5,11 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
+using TMPro;
+
 public class Scorer : MonoBehaviour {
     [SerializeField] Rigidbody door1, door2;
-    [SerializeField] TMPro.TextMeshProUGUI scoreText;
+    [SerializeField] TextMeshProUGUI scoreText;
     [SerializeField] Choice replay;
 
     public int score { get; private set; } = 0;
@@ -55,6 +57,8 @@ public class Scorer : MonoBehaviour {
                 scoreText.enabled = false;
                 replay.SetText($"Final score: {score}\n Replay?");
                 replay.Show();
+                Destroy(door1.gameObject);
+                Destroy(door2.gameObject);
                 onFinish.Invoke();
             }
         }
