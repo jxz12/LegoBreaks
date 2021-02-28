@@ -19,13 +19,14 @@ public class Scorer : MonoBehaviour {
     public float score { get; private set; } = 0;
     public void Update() {
         if (dropped) {
-            // TODO: draw target rings 
             float maxSqMag = 0;
             foreach (var brick in droppedBricks) {
-                maxSqMag = Mathf.Max(maxSqMag, brick.transform.position.sqrMagnitude);
+                var pos = brick.transform.position;
+                pos = new Vector3(pos.x, 0, pos.z);
+                maxSqMag = Mathf.Max(maxSqMag, pos.sqrMagnitude);
             }
             score = Mathf.Sqrt(maxSqMag);
-            scoreText.text = $"Score: {(int)(score*100)}";
+            scoreText.text = $"Score: {(int)(score/6*5*100)}";
         }
     }
 }
