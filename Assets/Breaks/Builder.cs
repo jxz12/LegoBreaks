@@ -12,7 +12,7 @@ public class Builder : MonoBehaviour {
     [SerializeField] int width;
     [SerializeField] int bricksAvailable;
     [SerializeField] Scorer scorer;
-    [SerializeField] Confirmation confirm;
+    [SerializeField] Choice drop;
     [SerializeField] Tripod tripod;
 
     private Brick placingBrick = null;
@@ -21,8 +21,8 @@ public class Builder : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        confirm.onYes.AddListener(Drop);
-        confirm.onNo.AddListener(Cancel);
+        drop.onYes.AddListener(Drop);
+        drop.onNo.AddListener(Cancel);
         PlaceBrick();
     }
     void PlaceBrick() {
@@ -43,7 +43,7 @@ public class Builder : MonoBehaviour {
                 Destroy(unplacedBricks.Pop().gameObject);
             }
         } else {
-            confirm.Show();
+            drop.Show();
         }
     }
     void MovePlacing() {
@@ -113,9 +113,8 @@ public class Builder : MonoBehaviour {
     }
     void Drop() {
         foreach (var brick in placedBricks) {
-            brick.ActivatePhysics();
+            brick.TogglePhysics(true);
         }
-        enabled = false;
         scorer.Drop(placedBricks);
         tripod.Follow(placedBricks, new Vector3(0,0,-10));
         // TODO: maybe add an exploder brick on impact?

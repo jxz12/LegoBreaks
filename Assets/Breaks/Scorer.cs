@@ -2,31 +2,60 @@ using System;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class Scorer : MonoBehaviour {
     [SerializeField] Rigidbody door1, door2;
     [SerializeField] TMPro.TextMeshProUGUI scoreText;
+    [SerializeField] Choice replay;
+
+    public int score { get; private set; } = 0;
 
     bool dropped = false;
+    float finishTime;
     IEnumerable<Brick> droppedBricks;
+
+    void Start() {
+        replay.onYes.AddListener(()=> SceneManager.LoadScene("Play", LoadSceneMode.Single));
+        replay.onNo.AddListener(()=> SceneManager.LoadScene("Menu", LoadSceneMode.Single));
+    }
+
     public void Drop(IEnumerable<Brick> bricks) {
         door1.isKinematic = false;
         door2.isKinematic = false;
         droppedBricks = bricks;
         dropped = true;
+        finishTime = Time.time + 3;
         scoreText.enabled = true;
     }
-    public float score { get; private set; } = 0;
     public void Update() {
         if (dropped) {
             float maxSqMag = 0;
+            float minVelocity = 999f;
+
             foreach (var brick in droppedBricks) {
                 var pos = brick.transform.position;
                 pos = new Vector3(pos.x, 0, pos.z);
                 maxSqMag = Mathf.Max(maxSqMag, pos.sqrMagnitude);
+                minVelocity = Mathf.Min(
+                    minVelocity, 
+                    brick.GetComponent<Rigidbody>().velocity.sqrMagnitude
+                );
             }
-            score = Mathf.Sqrt(maxSqMag);
-            scoreText.text = $"Score: {(int)(score/6*5*100)}";
+            float rawScore = Mathf.Sqrt(maxSqMag);
+            score = (int)(rawScore/6*5*100);  // magic number scale to match the rings
+            scoreText.text = $"Score: {score}";
+
+            if (minVelocity > .1f) {
+                finishTime = Mathf.Max(finishTime, Time.time + 1);
+            }
+            if (Time.time > finishTime) {
+                dropped = false;
+                scoreText.enabled = false;
+                replay.SetText($"Final score: {score}\n Replay?");
+                replay.Show();
+            }
         }
     }
 }

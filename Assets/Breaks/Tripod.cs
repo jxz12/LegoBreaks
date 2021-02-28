@@ -49,13 +49,13 @@ public class Tripod : MonoBehaviour
             currentPosition,
             targetPosition,
             ref velocityPosition,
-            .5f
+            .7f
         );
         currentField = Mathf.SmoothDamp(
             currentField,
             targetField,
             ref velocityField,
-            .5f
+            .7f
         );
         transform.position = currentPosition;
         Camera.main.fieldOfView = currentField;

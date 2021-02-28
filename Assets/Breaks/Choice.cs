@@ -2,11 +2,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 
-public class Confirmation : MonoBehaviour {
+public class Choice : MonoBehaviour {
 
     [SerializeField] Canvas canvas;
     [SerializeField] Button buttonYes;
     [SerializeField] Button buttonNo;
+    [SerializeField] TMPro.TextMeshProUGUI text;
 
     public UnityEvent onYes, onNo;
 
@@ -16,6 +17,9 @@ public class Confirmation : MonoBehaviour {
         buttonYes.onClick.AddListener(()=> onYes.Invoke());
         buttonNo.onClick.AddListener(()=> onNo.Invoke());
         Hide();
+    }
+    public void SetText(string toSet) {
+        text.text = toSet;
     }
     public void Show() {
         canvas.enabled = true;

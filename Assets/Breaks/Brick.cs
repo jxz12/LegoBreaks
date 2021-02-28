@@ -104,7 +104,7 @@ public class Brick : MonoBehaviour {
     void Update() {
         TweenRotation();
     }
-    public void ActivatePhysics() {
-        rbody.isKinematic = false;
+    public void TogglePhysics(bool on) {
+        rbody.isKinematic = !on;
     }
 }
