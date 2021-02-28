@@ -12,6 +12,7 @@ public class Builder : MonoBehaviour {
     [SerializeField] int width;
     [SerializeField] int bricksAvailable;
     [SerializeField] Scorer scorer;
+    [SerializeField] Confirmation confirm;
 
     private Brick placingBrick = null;
     private Stack<Brick> placedBricks = new Stack<Brick>();
@@ -19,6 +20,8 @@ public class Builder : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
+        confirm.onYes.AddListener(Drop);
+        confirm.onNo.AddListener(Cancel);
         PlaceBrick();
     }
     void PlaceBrick() {
@@ -33,21 +36,19 @@ public class Builder : MonoBehaviour {
                 placingBrick.CopyRotation(placedBricks.Peek());
             }
             MovePlacing();
+
             // clear redo stack
             while (unplacedBricks.Count > 0) {
                 Destroy(unplacedBricks.Pop().gameObject);
             }
         } else {
-            foreach (var brick in placedBricks) {
-                brick.ActivatePhysics();
-            }
-            enabled = false;
-            scorer.Drop(placedBricks);
-            // TODO: confirmation UI screen
-            // maybe add an exploder brick on impact?
+            confirm.Show();
         }
     }
     void MovePlacing() {
+        if (placingBrick == null) {
+            return;
+        }
         // https://docs.unity3d.com/ScriptReference/Plane.Raycast.html
         var m_Plane = new Plane(Vector3.up, Vector3.zero);
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -109,5 +110,16 @@ public class Builder : MonoBehaviour {
             placedBricks.Peek().gameObject.SetActive(true);
         }
         MovePlacing();
+    }
+    void Drop() {
+        foreach (var brick in placedBricks) {
+            brick.ActivatePhysics();
+        }
+        enabled = false;
+        scorer.Drop(placedBricks);
+        // TODO: maybe add an exploder brick on impact?
+    }
+    void Cancel() {
+        placingBrick = placedBricks.Pop();
     }
 }

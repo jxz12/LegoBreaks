@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Scorer : MonoBehaviour {
     [SerializeField] Rigidbody door1, door2;
+    [SerializeField] TMPro.TextMeshProUGUI scoreText;
 
     bool dropped = false;
     IEnumerable<Brick> droppedBricks;
@@ -13,8 +14,9 @@ public class Scorer : MonoBehaviour {
         door2.isKinematic = false;
         droppedBricks = bricks;
         dropped = true;
+        scoreText.enabled = true;
     }
-    public float score;
+    public float score { get; private set; } = 0;
     public void Update() {
         if (dropped) {
             // TODO: draw target rings 
@@ -23,6 +25,7 @@ public class Scorer : MonoBehaviour {
                 maxSqMag = Mathf.Max(maxSqMag, brick.transform.position.sqrMagnitude);
             }
             score = Mathf.Sqrt(maxSqMag);
+            scoreText.text = $"Score: {(int)(score*100)}";
         }
     }
 }
