@@ -16,6 +16,9 @@ public class Scorer : MonoBehaviour {
     float finishTime;
     IEnumerable<Brick> droppedBricks;
 
+    public UnityEvent onCollide;
+    public UnityEvent onFinish;
+
     void Start() {
         replay.onYes.AddListener(()=> SceneManager.LoadScene("Play", LoadSceneMode.Single));
         replay.onNo.AddListener(()=> SceneManager.LoadScene("Menu", LoadSceneMode.Single));
@@ -26,28 +29,25 @@ public class Scorer : MonoBehaviour {
         door2.isKinematic = false;
         droppedBricks = bricks;
         dropped = true;
-        finishTime = Time.time + 3;
+        finishTime = Time.time + 1;
         scoreText.enabled = true;
     }
     public void Update() {
         if (dropped) {
             float maxSqMag = 0;
-            float minVelocity = 999f;
+            bool isMoving = false;
 
             foreach (var brick in droppedBricks) {
                 var pos = brick.transform.position;
                 pos = new Vector3(pos.x, 0, pos.z);
                 maxSqMag = Mathf.Max(maxSqMag, pos.sqrMagnitude);
-                minVelocity = Mathf.Min(
-                    minVelocity, 
-                    brick.GetComponent<Rigidbody>().velocity.sqrMagnitude
-                );
+                isMoving |= !brick.GetComponent<Rigidbody>().IsSleeping();
             }
             float rawScore = Mathf.Sqrt(maxSqMag);
             score = (int)(rawScore/6*5*100);  // magic number scale to match the rings
             scoreText.text = $"Score: {score}";
 
-            if (minVelocity > .1f) {
+            if (isMoving) {
                 finishTime = Mathf.Max(finishTime, Time.time + 1);
             }
             if (Time.time > finishTime) {
@@ -55,7 +55,16 @@ public class Scorer : MonoBehaviour {
                 scoreText.enabled = false;
                 replay.SetText($"Final score: {score}\n Replay?");
                 replay.Show();
+                onFinish.Invoke();
             }
+        }
+    }
+
+    bool collided = false;
+    void OnCollisionEnter(Collision collision) {
+        if (!collided) {
+            onCollide.Invoke();
+            collided = true;
         }
     }
 }

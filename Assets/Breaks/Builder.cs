@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 public class Builder : MonoBehaviour {
 
@@ -14,10 +17,17 @@ public class Builder : MonoBehaviour {
     [SerializeField] Scorer scorer;
     [SerializeField] Choice drop;
     [SerializeField] Tripod tripod;
+    [SerializeField] Button controls;
 
     private Brick placingBrick = null;
     private Stack<Brick> placedBricks = new Stack<Brick>();
     private Stack<Brick> unplacedBricks = new Stack<Brick>();
+
+    public UnityEvent onPlace;
+    public UnityEvent onRotate;
+    public UnityEvent onDrop;
+
+    bool cancelTrigger;
 
     // Start is called before the first frame update
     void Start() {
@@ -29,6 +39,7 @@ public class Builder : MonoBehaviour {
         if (placingBrick != null) {
             placedBricks.Push(placingBrick);
             placingBrick = null;
+            onPlace.Invoke();
         }
         if (placedBricks.Count < bricksAvailable) {
             int randIdx = UnityEngine.Random.Range(0, brickPrefabs.Length);
@@ -79,22 +90,30 @@ public class Builder : MonoBehaviour {
 
     void Update() {
         if (placingBrick != null) {
-            if (Input.GetKeyDown(KeyCode.D)) {
+            if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) {
                 placingBrick.Rotate(true);
+                onRotate.Invoke();
             }
-            if (Input.GetKeyDown(KeyCode.A)) {
+            if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) {
                 placingBrick.Rotate(false);
+                onRotate.Invoke();
             }
-            if (Input.GetKeyDown(KeyCode.S)) {
+            if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)) {
                 Undo();
             }
-            if (Input.GetKeyDown(KeyCode.W)) {
+            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) {
                 Redo();
             }
             MovePlacing();
             if (Input.GetMouseButtonDown(0)) {
-                PlaceBrick();
+                // extra check in case use is trying to open controls
+                if (!EventSystem.current.IsPointerOverGameObject()) {
+                    PlaceBrick();
+                }
             }
+        } else if (cancelTrigger) {
+            placingBrick = placedBricks.Pop();
+            cancelTrigger = false;
         }
     }
     public void Undo() {
@@ -116,10 +135,13 @@ public class Builder : MonoBehaviour {
             brick.TogglePhysics(true);
         }
         scorer.Drop(placedBricks);
-        tripod.Follow(placedBricks, new Vector3(0,0,-10));
+        tripod.Follow(placedBricks, new Vector3(0,-2,-10));
+        controls.gameObject.SetActive(false);
         // TODO: maybe add an exploder brick on impact?
+        onDrop.Invoke();
     }
     void Cancel() {
-        placingBrick = placedBricks.Pop();
+        // bring back brick on next frame to prevent instant re-place
+        cancelTrigger = true;
     }
 }

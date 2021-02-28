@@ -520,7 +520,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3542710581352631857}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6643711368668958198}
+        m_MethodName: Play
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 8300000, guid: 93fbb109633e844259ea828442bda0cb,
+            type: 3}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &3542710581376479057
 GameObject:
   m_ObjectHideFlags: 0
@@ -535,6 +547,7 @@ GameObject:
   - component: {fileID: 3542710581376479061}
   - component: {fileID: 3542710581376479062}
   - component: {fileID: 3542710581376479063}
+  - component: {fileID: 6643711368668958198}
   m_Layer: 5
   m_Name: Choice
   m_TagString: Untagged
@@ -661,6 +674,18 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &6643711368668958198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3542710581376479057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 879e538f247574aa5b7e1e2ab95c4376, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3542710581395142806
 GameObject:
   m_ObjectHideFlags: 0
@@ -779,4 +804,16 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3542710581395142809}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6643711368668958198}
+        m_MethodName: Play
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 8300000, guid: 93fbb109633e844259ea828442bda0cb,
+            type: 3}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

@@ -16,7 +16,6 @@ public class Choice : MonoBehaviour {
         buttonNo.onClick.AddListener(Hide);
         buttonYes.onClick.AddListener(()=> onYes.Invoke());
         buttonNo.onClick.AddListener(()=> onNo.Invoke());
-        Hide();
     }
     public void SetText(string toSet) {
         text.text = toSet;

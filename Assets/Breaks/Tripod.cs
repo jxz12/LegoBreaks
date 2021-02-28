@@ -21,10 +21,10 @@ public class Tripod : MonoBehaviour
     }
     void LateUpdate()
     {
-        // Tween rotation
-        if (Input.GetMouseButtonDown(1)) {
-            targetRotation += 90;
-        }
+        // Tween rotation TODO: make offset work
+        // if (Input.GetMouseButtonDown(1)) {
+        //     targetRotation += 90;
+        // }
         currentRotation = Mathf.SmoothDamp(
             currentRotation,
             targetRotation,
