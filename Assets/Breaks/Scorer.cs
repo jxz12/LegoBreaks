@@ -14,6 +14,7 @@ public class Scorer : MonoBehaviour {
     [SerializeField] Choice replay;
     [SerializeField] LineRenderer maxDistLine;
 
+    public static int highScore { get; private set; } = 0;
     public int score { get; private set; } = 0;
 
     bool dropped = false;
@@ -22,6 +23,7 @@ public class Scorer : MonoBehaviour {
 
     public UnityEvent onCollide;
     public UnityEvent onFinish;
+    public UnityEvent onHighScore;
 
     void Start() {
         replay.onYes.AddListener(()=> SceneManager.LoadScene("Play", LoadSceneMode.Single));
@@ -36,9 +38,6 @@ public class Scorer : MonoBehaviour {
         
         startTime = Time.time;
         finishTime = Time.time + 1;
-
-        maxDistLine.enabled = true;
-        scoreText.enabled = true;
     }
     public void Update() {
         if (dropped) {
@@ -75,35 +74,31 @@ public class Scorer : MonoBehaviour {
             if (isMoving) {
                 finishTime = Mathf.Max(finishTime, Time.time + 1);
             }
-            if (Time.time > finishTime || Time.time > startTime+6) {
-                dropped = false;
-                replay.SetText($"Final score: {score}\n Replay?");
-                replay.Show();
+            if (Time.time > finishTime || Time.time > startTime+5) {
                 Destroy(door1.gameObject);
                 Destroy(door2.gameObject);
-                onFinish.Invoke();
-                // StartCoroutine(ScoreRoutine());
+                dropped = false;
+                if (score > highScore) {
+                    replay.SetText($"New high score! {score}\nOld high score: {highScore}\nReplay?");
+                    highScore = score;
+                    onHighScore.Invoke();
+                } else {
+                    replay.SetText($"You scored: {score}\nHigh score: {highScore}\nReplay?");
+                    onFinish.Invoke();
+                }
+                replay.Show();
             }
         }
-    }
-
-    IEnumerator ScoreRoutine() {
-        maxDistLine.enabled = true;
-        yield return new WaitForSeconds(.5f);
-        maxDistLine.enabled = false;
-        yield return new WaitForSeconds(.5f);
-        maxDistLine.enabled = true;
-        yield return new WaitForSeconds(.5f);
-        maxDistLine.enabled = false;
-        yield return new WaitForSeconds(.5f);
-        maxDistLine.enabled = true;
     }
 
     bool collided = false;
     void OnCollisionEnter(Collision collision) {
         if (!collided) {
-            onCollide.Invoke();
+            maxDistLine.enabled = true;
+            scoreText.enabled = true;
             collided = true;
+
+            onCollide.Invoke();
         }
     }
 }
