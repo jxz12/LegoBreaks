@@ -42,6 +42,7 @@ public class Builder : MonoBehaviour {
     }
     void PlaceBrick() {
         if (placingBrick != null) {
+            placingBrick.Opaque(true);
             placedBricks.Push(placingBrick);
             placingBrick = null;
             onPlace.Invoke();
@@ -118,6 +119,7 @@ public class Builder : MonoBehaviour {
             }
         } else if (cancelTrigger) {
             placingBrick = placedBricks.Pop();
+            placingBrick.Opaque(false);
             cancelTrigger = false;
         }
         remaining.text = $"Bricks remaining: {bricksAvailable - placedBricks.Count}";

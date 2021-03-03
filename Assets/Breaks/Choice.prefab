@@ -200,9 +200,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Drop?
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 65a69a543971647b8a1f9f615c36d523, type: 2}
-  m_sharedMaterial: {fileID: -6656905189396515994, guid: 65a69a543971647b8a1f9f615c36d523,
-    type: 2}
+  m_fontAsset: {fileID: 11400000, guid: a14e522e426f5472a8c9710aa5b252b7, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 9eda9cad22c67448b8085aedebdba378, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

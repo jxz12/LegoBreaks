@@ -10,8 +10,11 @@ public class Brick : MonoBehaviour {
     [SerializeField] int[] colStuds;
     [SerializeField] float rowOffset;
     [SerializeField] float colOffset;
-    [SerializeField] Transform toRotate;
+    [SerializeField] Transform[] toRotate;
     [SerializeField] Rigidbody rbody;
+
+    [SerializeField] GameObject transparent;
+    [SerializeField] GameObject opaque;
 
     void Start() {
         if (rowStuds.Length != colStuds.Length) {
@@ -44,6 +47,10 @@ public class Brick : MonoBehaviour {
             0,
             rowOffset * posScale.z
         );
+    }
+    public void Opaque(bool isOpaque) {
+        transparent.SetActive(!isOpaque);
+        opaque.SetActive(isOpaque);
     }
 
     public int rotationStep { get; private set; } = 0;
@@ -90,7 +97,9 @@ public class Brick : MonoBehaviour {
                 ref velocityRotation,
                 .05f
             );
-            toRotate.rotation = Quaternion.Euler(0, currentRotation, 0);
+            foreach (Transform t in toRotate) {
+                t.rotation = Quaternion.Euler(0, currentRotation, 0);
+            }
         }
     }
     // for instantly setting rotation
@@ -100,7 +109,9 @@ public class Brick : MonoBehaviour {
         }
         targetRotation = rotationStep * 90;
         currentRotation = targetRotation;
-        toRotate.rotation = Quaternion.Euler(0, currentRotation, 0);
+        foreach (Transform t in toRotate) {
+            t.rotation = Quaternion.Euler(0, currentRotation, 0);
+        }
     }
     void Update() {
         TweenRotation();
