@@ -40,7 +40,7 @@ public class Tripod : MonoBehaviour
                 bounds.Encapsulate(b.transform.position);
             }
             targetPosition = bounds.center + offsetPosition;
-            targetField = Mathf.Lerp(25, 75, Mathf.Max(bounds.size.x, bounds.size.z) / 40);
+            targetField = Mathf.Lerp(25, 85, Mathf.Max(bounds.size.x, bounds.size.z) / 40);
         } else {
             targetPosition = Vector3.zero;
             targetField = 60;

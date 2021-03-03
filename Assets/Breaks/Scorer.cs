@@ -75,7 +75,7 @@ public class Scorer : MonoBehaviour {
             if (isMoving) {
                 finishTime = Mathf.Max(finishTime, Time.time + 1);
             }
-            if (Time.time > finishTime || Time.time > startTime+8) {
+            if (Time.time > finishTime || Time.time > startTime+6) {
                 dropped = false;
                 replay.SetText($"Final score: {score}\n Replay?");
                 replay.Show();
